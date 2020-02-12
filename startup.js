@@ -1,6 +1,12 @@
 fetch(chrome.extension.getURL("widget/widget.html"))
   .then((response) => response.text())
   .then((result) => {
+
+
+
+
+
+
     var new_elem = document.createElement('div');
 
     new_elem.innerHTML = result;
@@ -12,11 +18,17 @@ fetch(chrome.extension.getURL("widget/widget.html"))
     document.querySelector('body').insertBefore(new_elem, something);
 
 
-    var move_x = browser.storage.sync.get('mymove').then((res) => {
-      document.getElementById('mydiv').style.left = res.mymove.position_x + 'px'
-      document.getElementById('mydiv').style.top = res.mymove.position_y + 'px'
-
-    });
+    chrome.storage.sync.get('mymove', (res) => {
+      if (res.mymove) {
+        console.log('res hai ')
+        document.getElementById('mydiv').style.left = res.mymove.position_x + 'px'
+        document.getElementById('mydiv').style.top = res.mymove.position_y + 'px'
+      } else {
+        console.log('res nahi hai ')
+        document.getElementById('mydiv').style.left = window.screenX + window.outerWidth - 400 + 'px';
+        document.getElementById('mydiv').style.top = window.screenY + window.outerHeight - 300 + 'px';
+      }
+    })
 
     let iconUrl = chrome.extension.getURL("images/app-icon(512x512).png");
     document.getElementById("skenicon").src = iconUrl;
@@ -85,7 +97,7 @@ fetch(chrome.extension.getURL("widget/widget.html"))
         if (event.x > screen.width) {
           event.x = screen.width - 20
         }
-        browser.storage.sync.set({
+        chrome.storage.sync.set({
           mymove: {
             position_x: event.clientX,
             position_y: event.clientY
