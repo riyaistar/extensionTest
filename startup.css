@@ -1,11 +1,11 @@
-#mydiv {
+#salesken_div {
   position: fixed;
   z-index: 999999;
   text-align: center;
 
 }
 
-#mydivheader {
+#salesken_divheader {
 height:40px;
   cursor: move;
   z-index: 99999999;
@@ -43,6 +43,7 @@ height:40px;
     background-color: #f9f9f9;
     border-radius: 10px;
     font-family: 'Roboto', sans-serif;
+    position: absolute;
 }
 
 .sken-chat-container>.sken-header {

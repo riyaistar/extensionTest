@@ -1,10 +1,7 @@
-<div id="mydiv">
-
-
-
-    <div class="sken-icon-draggable d-flex flex-column" id="mydivheader">
+<div id="salesken_div">
+    <div class="sken-icon-draggable d-flex flex-column" id="salesken_divheader">
         <img id="skenicon" class="skenicon icon-shadow" src="" alt="saleken" height="50" width="50">
-        <div class="sken-chat-container" id="salesken-cue-container" style="display: none;bottom: 0;right: 0;">
+        <div class="sken-chat-container" id="salesken-cue-container" style="display: block; z-index: 999;">
             <div class="sken-header d-flex align-center">
                 <!-- <img src="" alt="salesken" id="sken-image"> -->
                 <div style="  width: 100%;">
@@ -52,7 +49,8 @@
                 </div>
 
 
-                <div class="d-flex flex-row ml-auto align-center" style="margin-right:20px;z-index: 100;">
+                <div class="d-flex flex-row ml-auto align-center"
+                    style="margin-right:20px;z-index: 100;position: absolute;right:0">
                     <button type="button" id="sken-container-minimise" class="sken-button-transparent">
                         <svg xmlns="http://www.w3.org/2000/svg" id="Minus_icon" width="20" height="20"
                             data-name="Minus icon" viewBox="0 0 24 24">
@@ -84,7 +82,7 @@
             </div>
 
             <div class="sken-searchbar" style="padding: 10px 20px;">
-                <input type="search" class="sken-search-box-input" placeholder="Search">
+                <input type="search" class="sken-search-box-input" placeholder="Search" style="display:none">
             </div>
 
             <div id="sken-cues-body" class="sken-cues-body">

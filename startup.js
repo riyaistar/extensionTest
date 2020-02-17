@@ -1,49 +1,64 @@
 fetch(chrome.extension.getURL("widget/widget.html"))
   .then((response) => response.text())
   .then((result) => {
-
-
-
-
-
-
     var new_elem = document.createElement('div');
-
+    var isdragged = false;
     new_elem.innerHTML = result;
 
-
-
     var something = document.querySelector('body').firstChild;
-
     document.querySelector('body').insertBefore(new_elem, something);
-
-
+    var initialScreenHeight = window.innerHeight, initialScreenWidth = window.innerWidth;
     chrome.storage.sync.get('mymove', (res) => {
       if (res.mymove) {
-        console.log('res hai ')
-        document.getElementById('mydiv').style.left = res.mymove.position_x + 'px'
-        document.getElementById('mydiv').style.top = res.mymove.position_y + 'px'
+        document.getElementById('salesken_div').style.left = res.mymove.position_x + 'px'
+        document.getElementById('salesken_div').style.top = res.mymove.position_y + 'px'
       } else {
-        console.log('res nahi hai ')
-        document.getElementById('mydiv').style.left = window.screenX + window.outerWidth - 400 + 'px';
-        document.getElementById('mydiv').style.top = window.screenY + window.outerHeight - 300 + 'px';
+        document.getElementById('salesken_div').style.left = window.screenX + window.outerWidth - 400 + 'px';
+        document.getElementById('salesken_div').style.top = window.screenY + window.outerHeight - 300 + 'px';
       }
     })
 
     let iconUrl = chrome.extension.getURL("images/app-icon(512x512).png");
     document.getElementById("skenicon").src = iconUrl;
-    document.getElementById("skenicon").addEventListener("click", function () {
-      document.getElementById("salesken-cue-container").style.display = "block";
+    document.getElementById("skenicon").addEventListener("click", function (event) {
+      console.log(event)
+      if (!isdragged) {
+        if (document.getElementById("salesken-cue-container").style.display === "block") {
+          document.getElementById("salesken-cue-container").style.display = "none";
+        } else {
+          repositionPopup();
+          document.getElementById("salesken-cue-container").style.display = "block";
+        }
+      }
+      isdragged = false;
 
     });
 
+    window.addEventListener("resize", (event) => {
+      var initialPosX = parseInt(document.getElementById('salesken_div').style.left);
+      var initialPosY = parseInt(document.getElementById('salesken_div').style.top);
+
+      var currentScreenHeight = window.innerHeight, currentScreenWidth = window.innerWidth;
+
+      if (initialScreenHeight != currentScreenHeight) {
+        var currentY = (initialPosY * currentScreenHeight) / initialScreenHeight;
+        document.getElementById('salesken_div').style.top = currentY + "px";
+        repositionPopup();
+      }
+      if (initialScreenWidth != currentScreenWidth) {
+        var currentX = (initialPosX * currentScreenWidth) / initialScreenWidth;
+        document.getElementById('salesken_div').style.left = currentX + "px";
+        repositionPopup();
+      }
+    });
 
 
     document.getElementById("sken-container-close").addEventListener("click", () => {
       document.getElementById("salesken-cue-container").style.display = "none";
+      isdragged = false;
     });
 
-    dragElement(document.getElementById("mydiv"));
+    dragElement(document.getElementById("salesken_div"));
 
     function dragElement(elmnt) {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -68,7 +83,6 @@ fetch(chrome.extension.getURL("widget/widget.html"))
       }
 
       function elementDrag(e) {
-
         e = e || window.event;
         e.preventDefault();
         var winW = document.documentElement.clientWidth || document.body.clientWidth,
@@ -80,6 +94,7 @@ fetch(chrome.extension.getURL("widget/widget.html"))
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
         pos4 = e.clientY;
+
         // set the element's new position:
         //console.log((elmnt.offsetLeft - pos1), maxY, (elmnt.offsetLeft - pos1), maxX);
         if ((elmnt.offsetTop - pos2) <= maxY && (elmnt.offsetTop - pos2) >= 0) {
@@ -88,27 +103,45 @@ fetch(chrome.extension.getURL("widget/widget.html"))
         if ((elmnt.offsetLeft - pos1) <= maxX && (elmnt.offsetLeft - pos1) >= 0) {
           elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
         }
+        repositionPopup()
+
+        isdragged = true;
       }
 
       function closeDragElement(event) {
-        console.log(event.x)
-        console.log(event.y)
 
-        if (event.x > screen.width) {
-          event.x = screen.width - 20
-        }
-        chrome.storage.sync.set({
-          mymove: {
-            position_x: event.clientX,
-            position_y: event.clientY
-          }
-        });
         /* stop moving when mouse button is released:*/
         document.onmouseup = null;
         document.onmousemove = null;
+
+
+        browser.storage.sync.set("divposition", {
+          position_x: document.getElementById('salesken_div').offsetLeft,
+          position_y: document.getElementById('salesken_div').offsetTop
+        });
       }
     }
 
+    function repositionPopup() {
+      var iconleftpos = parseInt(document.getElementById('salesken_div').style.left)
+      var icontoppos = parseInt(document.getElementById('salesken_div').style.top)
+
+      if ((screen.width - iconleftpos - 100) < 333) {
+        document.getElementById("salesken-cue-container").style.right = 0
+      } else {
+        document.getElementById("salesken-cue-container").style.right = null;
+      }
+
+
+      if ((screen.height - icontoppos - 100) < 500) {
+        document.getElementById("salesken-cue-container").style.bottom = -10 + "px";
+        document.getElementById("salesken-cue-container").style.top = null;
+      } else {
+        document.getElementById("salesken-cue-container").style.top = 0 + "px";
+        document.getElementById("salesken-cue-container").style.bottom = null;
+
+      }
+    }
 
   }).catch((error) => {
     console.error('Error:', error);
