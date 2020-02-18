@@ -26,7 +26,7 @@ fetch(chrome.extension.getURL("widget/widget.html"))
         if (document.getElementById("salesken-cue-container").style.display === "block") {
           document.getElementById("salesken-cue-container").style.display = "none";
         } else {
-          repositionPopup();
+          openpopup();
           document.getElementById("salesken-cue-container").style.display = "block";
         }
       }
@@ -103,8 +103,7 @@ fetch(chrome.extension.getURL("widget/widget.html"))
         if ((elmnt.offsetLeft - pos1) <= maxX && (elmnt.offsetLeft - pos1) >= 0) {
           elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
         }
-        repositionPopup()
-
+        repositionPopup();
         isdragged = true;
       }
 
@@ -119,10 +118,30 @@ fetch(chrome.extension.getURL("widget/widget.html"))
           position_x: document.getElementById('salesken_div').offsetLeft,
           position_y: document.getElementById('salesken_div').offsetTop
         });
+
+        document.getElementById("salesken-cue-container").style.right = null;
+
       }
     }
-
     function repositionPopup() {
+      var iconleftpos = parseInt(document.getElementById('salesken_div').style.left)
+      var icontoppos = parseInt(document.getElementById('salesken_div').style.top)
+      if (document.getElementById("salesken-cue-container").style.display === "block") {
+        if (document.getElementById("salesken-cue-container").style.right === "0px") {
+          if ((window.innerWidth - iconleftpos) > 333) {
+            document.getElementById("salesken-cue-container").style.right = window.innerWidth - iconleftpos + "px";
+          }
+        } else {
+          if ((window.innerWidth - iconleftpos) < 333) {
+            document.getElementById("salesken_div").style.left = window.innerWidth - 333 + "px";
+          }
+        }
+      }
+
+
+    }
+
+    function openpopup() {
       var iconleftpos = parseInt(document.getElementById('salesken_div').style.left)
       var icontoppos = parseInt(document.getElementById('salesken_div').style.top)
 
@@ -141,6 +160,7 @@ fetch(chrome.extension.getURL("widget/widget.html"))
         document.getElementById("salesken-cue-container").style.bottom = null;
 
       }
+
     }
 
   }).catch((error) => {
